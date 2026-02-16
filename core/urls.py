@@ -13,5 +13,5 @@ urlpatterns = [
     
     # Built in Django Views
     path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'), # Login (specifying the specific auth view)
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'), # Logout
+    path('logout/', auth_views.LogoutView.as_view(template_name='core/logged_out.html'), name='logout'), # Logout
 ]
