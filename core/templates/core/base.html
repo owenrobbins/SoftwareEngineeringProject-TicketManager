@@ -19,9 +19,16 @@ All other templates inherit from this to ensure consistent styling
     <nav class="navbar navbar-light bg-light navbar-expand-lg">
         <div class ="container-fluid">
             <a class="navbar-brand" href='#'>TicketLite</a>
+            <div class="d-flex">
+                {% if user.is_authenticated %}
+                    <span class="navbar-text me-2">Logged in as {{ user.username }}</span>
+                    <a class="btn btn-outline-danger me-2" href="{% url 'core:logout' %}">Logout</a>
+                {% else %}
+                    <a class="btn btn-outline-primary me-2" href="{% url 'core:login' %}">Login</a>
+                    <a class="btn btn-outline-success" href="{% url 'core:register' %}">Register</a>
+                {% endif %}
         </div>
     </nav>
-
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
