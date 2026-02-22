@@ -20,10 +20,10 @@ All other templates inherit from this to ensure consistent styling
         <div class ="container-fluid">
             <a class="navbar-brand" href='#'>TicketLite</a>
             <div class="d-flex">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated %} <!-- If the user is logged in -->
                     <span class="navbar-text me-2">Logged in as {{ user.username }}</span>
                     <a class="btn btn-outline-danger me-2" href="{% url 'core:logout' %}">Logout</a>
-                {% else %}
+                {% else %} <!-- If the user is not logged in -->
                     <a class="btn btn-outline-primary me-2" href="{% url 'core:login' %}">Login</a>
                     <a class="btn btn-outline-success" href="{% url 'core:register' %}">Register</a>
                 {% endif %}
