@@ -10,6 +10,7 @@ urlpatterns = [
     # Custom Views
     path('', views.home, name='home'), # Root URL (Home)
     path('register/', views.register, name='register'), # Registration 
+    path('tickets/', views.ticket_list, name='ticket_list'), # List of all tickets
     
     # Built in Django Views
     path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'), # Login (specifying the specific auth view)

@@ -19,6 +19,15 @@ All other templates inherit from this to ensure consistent styling
     <nav class="navbar navbar-light bg-light navbar-expand-lg">
         <div class ="container-fluid">
             <a class="navbar-brand" href='#'>TicketLite</a>
+
+            <!-- Main Page Navigation Here -->
+            <ul class="navbar-nav me-auto">
+                <a class="nav-link" href="{% url 'core:home' %}">Home</a>
+                <a class="nav-link" href="{% url 'core:ticket_list' %}">Tickets</a>
+                <!-- Place following button links here -->
+            </ul>
+
+            <!-- Right-Side of Navbar -->
             <div class="d-flex">
                 {% if user.is_authenticated %} <!-- If the user is logged in -->
                     <span class="navbar-text me-2">Logged in as {{ user.username }}</span>
