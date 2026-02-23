@@ -21,9 +21,13 @@ All other templates inherit from this to ensure consistent styling
             <a class="navbar-brand" href='#'>TicketLite</a>
 
             <!-- Main Page Navigation Here -->
-            <ul class="navbar-nav me-auto">
-                <a class="nav-link" href="{% url 'core:home' %}">Home</a>
-                <a class="nav-link" href="{% url 'core:ticket_list' %}">Tickets</a>
+            <ul class="navbar-nav me-auto nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" aria-current="page" href="{% url 'core:home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}" aria-current="page" href="{% url 'core:ticket_list' %}">Tickets</a>
+                </li>
                 <!-- Place following button links here -->
             </ul>
 
