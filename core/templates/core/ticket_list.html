@@ -20,8 +20,8 @@
                     <td>{{ ticket.title }}</td>
                     <td>{{ ticket.project }}</td>
                     <td>{{ ticket.description|truncatechars:50 }}</td>
-                    <td>{{ ticket.status }}</td>
-                    <td>{{ ticket.priority }}</td>
+                    <td>{{ ticket.get_status_display }}</td>
+                    <td>{{ ticket.get_priority_display }}</td>
                     <td>{{ ticket.created_by }}</td>
                     <td>{{ ticket.created_at}}</td>
                 </tr>
