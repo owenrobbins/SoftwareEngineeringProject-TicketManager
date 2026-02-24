@@ -26,7 +26,11 @@
                     <td>{{ ticket.created_at}}</td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="7">No tickets found.</td></tr>
+                    {% if user.is_authenticated %}
+                        <tr><td colspan="7">No Tickets Found, Please Create a Ticket</td></tr>
+                    {% else %}
+                        <tr><td colspan="7">No Tickets Found, Please Log In</td></tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>
