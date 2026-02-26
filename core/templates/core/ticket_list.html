@@ -17,7 +17,11 @@
             <tbody>
                 {% for ticket in tickets %} <!-- Loops over each ticket passed in by the view -->
                 <tr>
-                    <td>{{ ticket.title }}</td>
+                    <td>
+                        <a href="{% url 'core:ticket_detail' ticket.id %}">
+                        {{ ticket.title }}
+                        </a>
+                    </td>
                     <td>{{ ticket.project }}</td>
                     <td>{{ ticket.description|truncatechars:50 }}</td>
                     <td>{{ ticket.get_status_display }}</td>

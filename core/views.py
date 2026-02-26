@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
 from core.models import Ticket
-from .forms import TicketForm
+from .forms import TicketForm, CommentForm
 
 def home(request):
     # Hompage for TicketLite
@@ -50,6 +50,35 @@ def ticket_list(request):
         tickets = []
         
     return render(request, 'core/ticket_list.html', {'tickets': tickets, 'form': form})
+
+def ticket_detail(request, pk):
+    # View for clicking into the ticket, shows all the details and comments of the ticket
+    # Also allows user to add new comments
+    
+    ticket = get_object_or_404(Ticket, pk=pk)
+    comments = ticket.comments.select_related('author').order_by('created_at')
+    
+    if request.method == 'POST': # If user submitted a new comment
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.ticket = ticket
+            new_comment.author = request.user
+            new_comment.save()
+            # Redirects back to the same page to avoid having to resubmit on the refresh
+            return redirect('core:ticket_detail', pk=ticket.pk)
+        
+    else:
+        comment_form = CommentForm()
+    
+    can_edit = request.user.is_authenticated and (request.user.is_staff or request.user == ticket.created_by)
+    return render(request, 'core/ticket_detail.html', {
+        'ticket': ticket,
+        'comments': ticket.comments.all(),
+        'comment_form': CommentForm(),
+        'can_edit': can_edit        
+    })
+        
 
 def is_admin(user):
     # Function to check if a user is an admin, and return result

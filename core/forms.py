@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ticket
+from .models import Ticket, Comment
 
 # Model view of the ticket form for the create button view
 class TicketForm(forms.ModelForm):
@@ -27,3 +27,19 @@ class TicketForm(forms.ModelForm):
                 'class': 'form-select',
             }),
         }
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Add a comment...'
+            }),
+        }
+        labels = {
+            'text': 'Comment',
+        }
+    

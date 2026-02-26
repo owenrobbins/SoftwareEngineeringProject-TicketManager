@@ -12,6 +12,7 @@ urlpatterns = [
     path('register/', views.register, name='register'), # Registration 
     path('tickets/', views.ticket_list, name='ticket_list'), # List of all tickets
     path('tickets/create/', views.create_ticket, name='create_ticket'), # Create Ticket
+    path('tickets/<int:pk>/', views.ticket_detail, name='ticket_detail'), # Details of the Ticket
     
     # Built in Django Views
     path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'), # Login (specifying the specific auth view)
