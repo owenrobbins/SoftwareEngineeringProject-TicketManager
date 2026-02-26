@@ -28,7 +28,92 @@
                             <p class="badge bg-warning text-dark">{{ ticket.get_priority_display }}</p>
                         </div>
                       </div>
+
+                      <!-- Description -->
+                       <div class="mb-3 mt-3">
+                        <h6>Description</h6>
+                        <div class="p-3 border rounded bg-white">
+                            {{ ticket.description|linebreaksbr}}
+                        </div>
+                       </div>
+                    </div>
+                    <div class="card-footer text-muted small">
+                        Created by {{ ticket.created_by }} on {{ ticket.created_at|date:"N j, Y, P" }}
+                        {% if ticket.updated_at %}
+                            . Updated {{ ticket.updated_at|date:"N j, Y, P"}}
+                        {% endif %}
+                    </div>
                 </div>
+                
+                <!-- Comments Section -->
+                 <div id="comments">
+                    <h5>Comments ({{ comments.count }})</h5>
+
+                    <!-- Listing Out Comments -->
+                     {% for comment in comments %}
+                     <div class="card mb-2 mt-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <strong>{{ comment.author }}</strong>
+                                    <span class="text-muted small"> . {{ comment.created_at|date:"N j, Y, P" }}</span>
+                                </div>
+                                <div class="text-end">
+                                    <!-- Edit and Delete comment buttons go here-->
+                                </div>
+                            </div>
+                            <hr class="my-2">
+                            <div>{{ comment.text|linebreaksbr }}</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p class="text-muted">No comments yet. Be the first to comment.</p>
+                    {% endfor %}
+
+                    <!-- Comment Form (for adding comments) -->
+                     <div class="card mt-3">
+                        <div class="card-body">
+                            <h6>Comment</h6>
+                            {% if user.is_authenticated %}
+                                <form method="post" action="{% url 'core:ticket_detail' ticket.pk %}">
+                                    {% csrf_token %}
+                                    <div class="mb-2 mt-3">
+                                        {{ comment_form.text }}
+                                        {% if comment_form.text.errors %}
+                                            <div class="text-danger small">{{ comment_form.text.errors|striptags }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm mt-2">Post Comment</button>
+                                </form>
+                            {% else %}
+                                <p>Please <a href="{%url 'core:login' %}">Log in</a> to post comments.<p>
+                            {%endif%}
+                        </div>
+                     </div>
+                 </div>
+            </div>
+
+            <!-- Right Column with quick ticket info and actions -->
+             <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6>Quick Details</h6>
+                        <dl class="row mt-20">
+                            <dt class="col-5">Project</dt><dd class="col-7">{{ ticket.project.name }}</dd>
+                            <dt class="col-5">Status</dt><dd class="col-7">{{ ticket.get_status_display }}</dd>
+                            <dt class="col-5">Priority</dt><dd class="col-7">{{ ticket.get_priority_display }}</dd>
+                            <dt class="col-5">Created by</dt><dd class="col-7">{{ ticket.created_by }}</dd>
+                            <dt class="col-5">Assigned to</dt><dd class="col-7">{{ ticket.assigned_to }}</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- To-DO: Adding in recent ticket activity and related tickets etc -->
+                 <div class="card">
+                    <div class="card-body">
+                        <h6>Activity</h6>
+                        <p class="small text-muted">** Placeholder for recent ticket activity and related tickets etc.</p>
+                    </div>
             </div>
         </div>
     </div>
