@@ -92,7 +92,7 @@ def edit_ticket(request, pk):
         form = TicketForm(request.POST, instance=ticket) # Ties ticket form to existing ticket, updates rather than replace
         if form.is_valid():
             form.save()
-            messages.success(request, "Ticket updated")
+            messages.success(request, "Ticket Updated Successfully")
             return redirect('core:ticket_detail', pk=ticket.pk) # Saves changes and redirects to see changes
     else:
         form = TicketForm(instance=ticket) # Fetches instance of form and prefills with information
