@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h3>Edit Ticket</h3>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}  {# ensure widgets in forms.py have 'class': 'form-control' or 'form-select' #}
+        {% if field.errors %}
+          <div class="text-danger small">{{ field.errors|striptags }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'core:ticket_detail' ticket.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

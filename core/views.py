@@ -1,8 +1,9 @@
 # core/views.py
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from core.models import Ticket
 from .forms import TicketForm, CommentForm
 
@@ -49,7 +50,7 @@ def ticket_list(request):
     else:
         tickets = []
         
-    return render(request, 'core/ticket_list.html', {'tickets': tickets, 'form': form})
+    return render(request, 'core/ticket_list.html', {'form': form, 'tickets': tickets})
 
 def ticket_detail(request, pk):
     # View for clicking into the ticket, shows all the details and comments of the ticket
@@ -78,6 +79,25 @@ def ticket_detail(request, pk):
         'comment_form': CommentForm(),
         'can_edit': can_edit        
     })
+    
+@login_required
+def edit_ticket(request, pk):
+    # View for editing ticket details, only accessible if logged in
+    ticket = get_object_or_404(Ticket, pk=pk)
+    # Checking for edit permissions
+    if not (request.user.is_staff or request.user == ticket.created_by):
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        form = TicketForm(request.POST, instance=ticket) # Ties ticket form to existing ticket, updates rather than replace
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Ticket updated")
+            return redirect('core:ticket_detail', pk=ticket.pk) # Saves changes and redirects to see changes
+    else:
+        form = TicketForm(instance=ticket) # Fetches instance of form and prefills with information
+
+    return render(request, 'core/ticket_edit.html', {'form': form, 'ticket': ticket})
         
 
 def is_admin(user):

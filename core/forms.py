@@ -1,7 +1,7 @@
 from django import forms
 from .models import Ticket, Comment
 
-# Model view of the ticket form for the create button view
+# Modal view of the ticket form for the create button view
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket

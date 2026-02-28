@@ -27,6 +27,26 @@
                             <p class="mb-1"><strong>Priority</strong></p>
                             <p class="badge bg-warning text-dark">{{ ticket.get_priority_display }}</p>
                         </div>
+                        <div class="col-md-6 text-md-end">
+                            {% if user.is_staff %} <!-- Checks if the user is an admin -->
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm w-30 mb-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#confirmDeleteModal"
+                            >
+                            Delete
+                            </button>
+                            {% endif %}
+                            {% if can_edit %}
+                            <a href="{% url 'core:edit_ticket' ticket.pk %}"
+                                class="btn btn-outline-primary btn-sm w-30 mb-2"
+                                role="button"
+                                aria-label="Edit ticket {{ ticket.title }}">
+                                Edit Ticket
+                            </a>
+                            {% endif %}   
+                        </div>
                       </div>
 
                       <!-- Description -->
@@ -118,4 +138,6 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Ticket Modal View -->
 {% endblock content %}
