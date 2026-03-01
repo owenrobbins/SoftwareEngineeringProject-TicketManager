@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from core.models import Ticket
+from core.models import Project, Ticket
 from .forms import TicketForm, CommentForm
 
 def is_admin(user):
@@ -12,9 +12,37 @@ def is_admin(user):
     return user.is_staff
 
 def home(request):
-    # Hompage for TicketLite
-    form = TicketForm()
-    return render(request, 'core/home.html', {'form': form})
+    # Hompage for TicketLite, shows quick actions and stats
+    
+    # Stats
+    total = Ticket.objects.count()
+    todo_count = Ticket.objects.filter(status='TO-DO').count()
+    in_progress_count = Ticket.objects.filter(status='IN-PROGRESS').count()
+    for_review_count = Ticket.objects.filter(status='FOR-REVIEW').count()
+    done_count = Ticket.objects.filter(status='DONE').count()
+    assigned_to_me_count = Ticket.objects.filter(assigned_to=request.user).count()
+    projects_count = Project.objects.count()
+
+    # Ticket Lists
+    recent = Ticket.objects.order_by('-created_at')[:6]
+    todo_tickets = Ticket.objects.filter(status='TO-DO').order_by('-created_at')
+
+    # Combining all context stats into one dict to pass into render
+    context = {
+        'stats': {
+            'total_tickets': total,
+            'todo_count': todo_count,
+            'in_progress_count': in_progress_count,
+            'for_review_count': for_review_count,
+            'done_count': done_count,
+            'assigned_to_me_count': assigned_to_me_count,
+            'projects': projects_count,
+        },
+        'recent_tickets': recent,
+        'todo_tickets': todo_tickets,
+        'form': TicketForm(),   # For create modal form
+    }
+    return render(request, 'core/home.html', context)
 
 def register(request):
     # User account registration screen

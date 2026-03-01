@@ -10,4 +10,71 @@ Inherits from base.html
   <h1>Welcome to TicketLite</h1>
   <p>This is your project dashboard.</p>
 </div>
+
+  <!-- Stat Overview Bar-->
+   <div class="row g-3 mb-4 mt-3 justify-content-center">
+
+    <!-- Card for All Ticket Count -->
+    <div class="col-sm-6 col-md-2">
+      <div class="card text-center h-100">
+        <div class="card-body d-flex flex-column justify-content-center">
+          <h6 class="card-title mb-2">All Tickets</h6>
+          <p class="display-6 mb-0">{{ stats.total_tickets }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card for Assigned To Me Ticket Count -->
+    <div class="col-sm-6 col-md-2">
+      <div class="card text-center h-100">
+        <div class="card-body d-flex flex-column justify-content-center">
+          <h6 class="card-title mb-2">Assigned To Me</h6>
+          <p class="display-6 mb-0">{{ stats.assigned_to_me_count }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card for To-Do Ticket Count -->
+    <div class="col-sm-6 col-md-2">
+      <div class="card text-center h-100">
+        <div class="card-body d-flex flex-column justify-content-center">
+          <h6 class="card-title mb-2">To-Do Tickets</h6>
+          <p class="display-6 mb-0">{{ stats.todo_count }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card for In-Progress Ticket Count -->
+    <div class="col-sm-6 col-md-2">
+      <div class="card text-center h-100">
+        <div class="card-body d-flex flex-column justify-content-center">
+          <h6 class="card-title mb-2">In Progress Tickets</h6>
+          <p class="display-6 mb-0">{{ stats.in_progress_count }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card for For-Review Ticket Count -->
+    <div class="col-sm-6 col-md-2">
+      <div class="card text-center h-100">
+        <div class="card-body d-flex flex-column justify-content-center">
+          <h6 class="card-title mb-2">For Review Tickets</h6>
+          <p class="display-6 mb-0">{{ stats.for_review_count }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card for Done Ticket Count -->
+    <div class="col-sm-6 col-md-2">
+      <div class="card text-center h-100">
+        <div class="card-body d-flex flex-column justify-content-center">
+          <h6 class="card-title mb-2">Done Tickets</h6>
+          <p class="display-6 mb-0">{{ stats.done_count }}</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
 {% endblock content %}
