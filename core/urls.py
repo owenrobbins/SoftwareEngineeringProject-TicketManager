@@ -14,6 +14,7 @@ urlpatterns = [
     path('tickets/create/', views.create_ticket, name='create_ticket'), # Create Ticket
     path('tickets/<int:pk>/', views.ticket_detail, name='ticket_detail'), # Details of the Ticket
     path('tickets/<int:pk>/edit/', views.edit_ticket, name='edit_ticket'), # Edit Ticket
+    path('tickets/<int:pk>/delete/', views.delete_ticket, name='delete_ticket'), # Delete Ticket
     
     # Built in Django Views
     path('login/', auth_views.LoginView.as_view(template_name='core/login.html'), name='login'), # Login (specifying the specific auth view)

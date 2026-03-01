@@ -7,6 +7,10 @@ from django.contrib import messages
 from core.models import Ticket
 from .forms import TicketForm, CommentForm
 
+def is_admin(user):
+    # Helper Function to check if a user is an admin, and return result
+    return user.is_staff
+
 def home(request):
     # Hompage for TicketLite
     form = TicketForm()
@@ -99,12 +103,22 @@ def edit_ticket(request, pk):
 
     return render(request, 'core/ticket_edit.html', {'form': form, 'ticket': ticket})
         
+# Delete Ticket View, only allowed for staff
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def delete_ticket(request, pk):
+    ticket = get_object_or_404(Ticket, pk=pk)
 
-def is_admin(user):
-    # Function to check if a user is an admin, and return result
-    return user.is_staff
+    if request.method == 'POST':
+        # Delete the ticket and give feedback to user with message popup
+        ticket.delete()
+        messages.success(request, "Ticket deleted successfully.")
+        return redirect('core:ticket_list')
+
+    # If someone GETs the URL (shouldn't happen for modal flow), render a simple confirm page
+    return render(request, 'core/ticket_confirm_delete.html', {'ticket': ticket})
 
 @login_required
 @user_passes_test(is_admin)
-def delete_project(request, project_id): # Placeholder for an example admin request, with decorators to check login and admin privileges
+def delete_project(request, project_id): # Placeholder for deleting entire project, follows similar flow to delete ticket.
     return
