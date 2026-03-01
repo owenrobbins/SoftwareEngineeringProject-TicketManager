@@ -14,32 +14,40 @@ def is_admin(user):
 def home(request):
     # Hompage for TicketLite, shows quick actions and stats
     
-    # Stats
+    # Global Stats
     total = Ticket.objects.count()
-    todo_count = Ticket.objects.filter(status='TO-DO').count()
-    in_progress_count = Ticket.objects.filter(status='IN-PROGRESS').count()
-    for_review_count = Ticket.objects.filter(status='FOR-REVIEW').count()
-    done_count = Ticket.objects.filter(status='DONE').count()
-    assigned_to_me_count = Ticket.objects.filter(assigned_to=request.user).count()
     projects_count = Project.objects.count()
+    
+    # Personally Assigned Stats (stats for tickets that are assigned to the user)
+    todo_assigned_count = Ticket.objects.filter(status='TO-DO').count()
+    in_progress_assigned_count = Ticket.objects.filter(status='IN_PROGRESS').count()
+    for_review_assigned_count = Ticket.objects.filter(status='FOR_REVIEW').count()
+    done_assigned_count = Ticket.objects.filter(status='DONE').count()
+    assigned_to_me_count = Ticket.objects.filter(assigned_to=request.user).count()
 
-    # Ticket Lists
+    # Personall Assigned Ticket Lists (stats for tickets that are assigned to the user, most recent first)
     recent = Ticket.objects.order_by('-created_at')[:6]
-    todo_tickets = Ticket.objects.filter(status='TO-DO').order_by('-created_at')
+    todo_assigned = Ticket.objects.filter(status='TO-DO').order_by('-created_at')
+    in_progress_assigned = Ticket.objects.filter(status='IN_PROGRESS').order_by('-created_at')
+    for_review_assigned = Ticket.objects.filter(status='FOR_REVIEW').order_by('-created_at')
+    done_assigned = Ticket.objects.filter(status='DONE').order_by('-created_at')
 
     # Combining all context stats into one dict to pass into render
     context = {
         'stats': {
             'total_tickets': total,
-            'todo_count': todo_count,
-            'in_progress_count': in_progress_count,
-            'for_review_count': for_review_count,
-            'done_count': done_count,
+            'todo_assigned_count': todo_assigned_count,
+            'in_progress_assigned_count': in_progress_assigned_count,
+            'for_review_assigned_count': for_review_assigned_count,
+            'done_assigned_count': done_assigned_count,
             'assigned_to_me_count': assigned_to_me_count,
             'projects': projects_count,
         },
         'recent_tickets': recent,
-        'todo_tickets': todo_tickets,
+        'todo_assigned': todo_assigned,
+        'in_progress_assigned': in_progress_assigned,
+        'for_review_assigned': for_review_assigned,
+        'done_assigned': done_assigned,
         'form': TicketForm(),   # For create modal form
     }
     return render(request, 'core/home.html', context)
