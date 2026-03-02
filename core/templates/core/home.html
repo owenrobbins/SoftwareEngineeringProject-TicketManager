@@ -99,7 +99,7 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
   </ul>
 
   <!-- In Progress Tickets -->
-  <h5>To-Do Tickets ({{ stats.in_progress_assigned_count }})</h5>
+  <h5>In Progress Tickets ({{ stats.in_progress_assigned_count }})</h5>
   <ul class="list-group list-group-flush mb-3">
     {% for t in in_progress_assigned %}
       <a href="{% url 'core:ticket_detail' t.pk %}" 

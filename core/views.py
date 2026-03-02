@@ -11,6 +11,7 @@ def is_admin(user):
     # Helper Function to check if a user is an admin, and return result
     return user.is_staff
 
+@login_required
 def home(request):
     # Hompage for TicketLite, shows quick actions and stats
     
@@ -19,18 +20,18 @@ def home(request):
     projects_count = Project.objects.count()
     
     # Personally Assigned Stats (stats for tickets that are assigned to the user)
-    todo_assigned_count = Ticket.objects.filter(status='TO-DO').count()
-    in_progress_assigned_count = Ticket.objects.filter(status='IN_PROGRESS').count()
-    for_review_assigned_count = Ticket.objects.filter(status='FOR_REVIEW').count()
-    done_assigned_count = Ticket.objects.filter(status='DONE').count()
+    todo_assigned_count = Ticket.objects.filter(status='TO-DO', assigned_to=request.user).count()
+    in_progress_assigned_count = Ticket.objects.filter(status='IN_PROGRESS', assigned_to=request.user).count()
+    for_review_assigned_count = Ticket.objects.filter(status='FOR_REVIEW', assigned_to=request.user).count()
+    done_assigned_count = Ticket.objects.filter(status='DONE', assigned_to=request.user).count()
     assigned_to_me_count = Ticket.objects.filter(assigned_to=request.user).count()
 
     # Personall Assigned Ticket Lists (stats for tickets that are assigned to the user, most recent first)
-    recent = Ticket.objects.order_by('-created_at')[:6]
-    todo_assigned = Ticket.objects.filter(status='TO-DO').order_by('-created_at')
-    in_progress_assigned = Ticket.objects.filter(status='IN_PROGRESS').order_by('-created_at')
-    for_review_assigned = Ticket.objects.filter(status='FOR_REVIEW').order_by('-created_at')
-    done_assigned = Ticket.objects.filter(status='DONE').order_by('-created_at')
+    recent = Ticket.objects.filter(assigned_to=request.user).order_by('-created_at')[:6]
+    todo_assigned = Ticket.objects.filter(status='TO-DO', assigned_to=request.user).order_by('-created_at')
+    in_progress_assigned = Ticket.objects.filter(status='IN_PROGRESS', assigned_to=request.user).order_by('-created_at')
+    for_review_assigned = Ticket.objects.filter(status='FOR_REVIEW', assigned_to=request.user).order_by('-created_at')
+    done_assigned = Ticket.objects.filter(status='DONE', assigned_to=request.user).order_by('-created_at')
 
     # Combining all context stats into one dict to pass into render
     context = {
@@ -82,6 +83,7 @@ def create_ticket(request):
     # If someone manages to get tickets/create just send back to tickets 
     return redirect('core:ticket_list')
 
+@login_required
 def ticket_list(request):
     # list of all active tickets for a project, only shows list if logged in
     form = TicketForm()
@@ -92,6 +94,7 @@ def ticket_list(request):
         
     return render(request, 'core/ticket_list.html', {'form': form, 'tickets': tickets})
 
+@login_required
 def ticket_detail(request, pk):
     # View for clicking into the ticket, shows all the details and comments of the ticket
     # Also allows user to add new comments
