@@ -1,24 +1,32 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Space to create models
+# Django models define the structure of the database tables
+# Each class becomes a table with the sqlite db, each attribute becomes a column
+# Django handles writing the sql itself, these classes handle the shape of the data
+# Django models documentation: https://docs.djangoproject.com/en/6.0/intro/tutorial02/#creating-models
+# Various field options to choose from: https://docs.djangoproject.com/en/6.0/ref/models/fields/
 
 class Project(models.Model):
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True) # means this field isnt required within the forms
+    created_at = models.DateTimeField(auto_now_add=True) #auto set on creation
     owner = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='projects', null=True, blank=True) # If user deleted, allows the project to go unassigned
     
     def __str__(self):
         return self.name # shows project name in admin panel
     
 class Ticket(models.Model):
-    class Status(models.TextChoices): # Inner class for Status enum choices
+    
+    # TextChoices is similar to an enum, provides options for a field
+    # First value is stored in database, second is human-readable label
+
+    class Status(models.TextChoices):
         TO_DO = "TO-DO", "To-Do"
         In_PROGRESS = "IN_PROGRESS", "In Progress"
         FOR_REVIEW = "FOR_REVIEW", "For Review"
         DONE = "DONE", "Done"
-    class Priority(models.TextChoices): # Inner class for priorty enum choices
+    class Priority(models.TextChoices):
         LOW = "LOW", "Low"
         MEDIUM = "MEDIUM", "Medium"
         HIGH = "HIGH", "High"
@@ -38,6 +46,7 @@ class Ticket(models.Model):
         return self.title
     
 class Comment(models.Model):
+    # Cascade here to delete any comments when the parent ticket is deleted
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name="comments")
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     text = models.TextField()
@@ -47,6 +56,7 @@ class Comment(models.Model):
         return self.text[:30] # Returns first 30 characters of the comment
     
 class UserProfile (models.Model):
+    # OneToOneField means that User can only have one profile, profile is deleted when the user is.
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     department = models.CharField(max_length=100, blank=True)
     job_title = models.CharField(max_length=100, blank=True)

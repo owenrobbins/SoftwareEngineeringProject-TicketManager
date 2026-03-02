@@ -1,5 +1,10 @@
 {% extends "core/base.html" %}
 {% block content %}
+
+<!-- Full view of a single ticket and all of its details
+    Auto renders the edit / delete buttons depending on permissions
+-->
+
 <div class="container mt-4">
     <div class="row">
         <div class="col-lg-8">
@@ -79,7 +84,7 @@
                                     <span class="text-muted small"> . {{ comment.created_at|date:"N j, Y, P" }}</span>
                                 </div>
                                 <div class="text-end">
-                                    <!-- Edit and Delete comment buttons go here-->
+                                    <!-- Edit and Delete comment buttons will go here-->
                                 </div>
                             </div>
                             <hr class="my-2">
@@ -139,7 +144,7 @@
     </div>
 </div>
 
-<!-- Confirm Delete Ticket Modal View, User Feedback -->
+<!-- Delete button triggers a modal, to submit a POST request to the delete view, requiring confirmation from the user before deleting anything -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">

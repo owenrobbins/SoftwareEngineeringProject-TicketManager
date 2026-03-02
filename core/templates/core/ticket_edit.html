@@ -1,5 +1,11 @@
 {% extends "core/base.html" %}
 {% block content %}
+
+<!-- Form for updating existing tickets 
+     View pre-fills the form with current ticket data using instance=ticked, 
+     User then sees existing values rather than the blank form 
+-->
+
 <div class="container mt-4">
   <h3>Edit Ticket</h3>
   <form method="post">
@@ -7,7 +13,7 @@
     {% for field in form %}
       <div class="mb-3">
         <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}  {# ensure widgets in forms.py have 'class': 'form-control' or 'form-select' #}
+        {{ field }}
         {% if field.errors %}
           <div class="text-danger small">{{ field.errors|striptags }}</div>
         {% endif %}

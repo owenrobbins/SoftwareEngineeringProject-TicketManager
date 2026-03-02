@@ -1,11 +1,17 @@
 from django import forms
 from .models import Ticket, Comment
 
-# Modal view of the ticket form for the create button view
+# Model forms can create a form directly from the fields of a model class
+# Can define what fields to include and customise how they appear 
+# Keeping form logic separate from the views and templates
+# Model Forms Documentation: https://docs.djangoproject.com/en/6.0/ref/forms/models/#
+
 class TicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
         fields = ['title', 'description', 'project', 'status', 'priority', 'assigned_to']
+        
+        # Widgets for control over what the HTML renders for each model field
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -31,7 +37,7 @@ class TicketForm(forms.ModelForm):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['text']
+        fields = ['text'] # Only the text field as ticket and author are set in the view
         widgets = {
             'text': forms.Textarea(attrs={
                 'class': 'form-control',

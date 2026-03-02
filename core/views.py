@@ -11,9 +11,16 @@ def is_admin(user):
     # Helper Function to check if a user is an admin, and return result
     return user.is_staff
 
+def landing(request):
+    # Root URL entry point, logged in users get pushed straight to the dashboard, avoiding the login / logout page 
+    if request.user.is_authenticated:
+        return redirect('core:home')
+    return render(request, 'core/landing.html')
+
 @login_required
 def home(request):
-    # Hompage for TicketLite, shows quick actions and stats
+    # Hompage for TicketLite, shows quick actions and stats. 
+    # @login_required measn that users get redirected to LOGIN_URL within settings
     
     # Global Stats
     total = Ticket.objects.count()
@@ -54,12 +61,13 @@ def home(request):
     return render(request, 'core/home.html', context)
 
 def register(request):
-    # User account registration screen
+    # Uses Django's build in UserCreationForm rather than writing manually.
+    # On success, the user gets redirected to log-in rather than automatically logging in
     if request.method == 'POST': # If the user is submitting the form
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('core:login') # Redirects the user to the login page after successfully registering user
+            return redirect('core:login')
     
     else: # If the user is just opening the Registration Form
         form = UserCreationForm()
@@ -76,7 +84,7 @@ def create_ticket(request):
             # Redirects after successful creation of ticket
             return redirect('core:ticket_list')
         else:
-            # Form invalid - fall back and try rendering ticket-list with errors
+            # Form invalid - fall back and try rendering ticket-list with errors to show validation to the user
             tickets = Ticket.objects.all() if request.user.is_authenticated else []
             return render(request, 'core/ticket_list.html', {'tickets': tickets, 'form': form})
 
@@ -97,7 +105,7 @@ def ticket_list(request):
 @login_required
 def ticket_detail(request, pk):
     # View for clicking into the ticket, shows all the details and comments of the ticket
-    # Also allows user to add new comments
+    # get_object_or_404 fteches the ticket id, if it doesnt exist it displays a simple 404 page.
     
     ticket = get_object_or_404(Ticket, pk=pk)
     comments = ticket.comments.select_related('author').order_by('created_at')
@@ -109,13 +117,14 @@ def ticket_detail(request, pk):
             new_comment.ticket = ticket
             new_comment.author = request.user
             new_comment.save()
-            # Redirects back to the same page to avoid having to resubmit on the refresh
+            # Redirects back to the same page to avoid comment resubmitting on the refresh
             return redirect('core:ticket_detail', pk=ticket.pk)
         
     else:
         comment_form = CommentForm()
     
     can_edit = request.user.is_authenticated and (request.user.is_staff or request.user == ticket.created_by)
+    
     return render(request, 'core/ticket_detail.html', {
         'ticket': ticket,
         'comments': ticket.comments.all(),
@@ -127,6 +136,7 @@ def ticket_detail(request, pk):
 def edit_ticket(request, pk):
     # View for editing ticket details, only accessible if logged in
     ticket = get_object_or_404(Ticket, pk=pk)
+    
     # Checking for edit permissions
     if not (request.user.is_staff or request.user == ticket.created_by):
         return HttpResponseForbidden()
@@ -142,10 +152,11 @@ def edit_ticket(request, pk):
 
     return render(request, 'core/ticket_edit.html', {'form': form, 'ticket': ticket})
         
-# Delete Ticket View, only allowed for staff
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def delete_ticket(request, pk):
+    # Restricted the view to staff only through @user_passes_test
+    # Deleting is handled via POST from a confirmation modal pop-up to avoid accidental deletion through links
     ticket = get_object_or_404(Ticket, pk=pk)
 
     if request.method == 'POST':

@@ -1,5 +1,8 @@
 {% extends "core/base.html" %}
 {% block content %}
+
+<!-- Table view of all tickets that are within the system -->
+
     <div class="container mt-4">
         <h2>Tickets</h2>
         <table class="table table-striped table-hover table-responsive"> <!-- Bootstrap styled table for displaying the tickets -->
@@ -23,7 +26,7 @@
                         </a>
                     </td>
                     <td>{{ ticket.project }}</td>
-                    <td>{{ ticket.description|truncatechars:50 }}</td>
+                    <td>{{ ticket.description|truncatechars:50 }}</td> <!-- Limits the view to 50 chars and adds ... to the end -->
                     <td>{{ ticket.get_status_display }}</td>
                     <td>{{ ticket.get_priority_display }}</td>
                     <td>{{ ticket.created_by }}</td>

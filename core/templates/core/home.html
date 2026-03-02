@@ -1,6 +1,6 @@
 <!--
-Homepage for TicketLite
-Shows overall stats as well as lists of tickets assigned to logged in user.
+Main dashboard for TicketLite, only reachable when logged in 
+Shows ticket stats, lists of tickets assigned to user, grouped by stats
 -->
 
 {% extends "core/base.html" %}
@@ -14,7 +14,7 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
   <!-- Stat Overview Bar-->
    <div class="row g-3 mb-4 mt-3 justify-content-center">
 
-    <!-- Card for All Ticket Count -->
+    <!-- All Ticket Count -->
     <div class="col-sm-6 col-md-2">
       <div class="card text-center h-100">
         <div class="card-body d-flex flex-column justify-content-center">
@@ -24,7 +24,7 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
       </div>
     </div>
 
-    <!-- Card for Assigned To Me Ticket Count -->
+    <!--Assigned To Me Ticket Count -->
     <div class="col-sm-6 col-md-2">
       <div class="card text-center h-100">
         <div class="card-body d-flex flex-column justify-content-center">
@@ -34,7 +34,7 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
       </div>
     </div>
 
-    <!-- Card for To-Do Ticket Count -->
+    <!-- To-Do Ticket Count -->
     <div class="col-sm-6 col-md-2">
       <div class="card text-center h-100">
         <div class="card-body d-flex flex-column justify-content-center">
@@ -44,7 +44,7 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
       </div>
     </div>
 
-    <!-- Card for In-Progress Ticket Count -->
+    <!--In-Progress Ticket Count -->
     <div class="col-sm-6 col-md-2">
       <div class="card text-center h-100">
         <div class="card-body d-flex flex-column justify-content-center">
@@ -54,7 +54,7 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
       </div>
     </div>
 
-    <!-- Card for For-Review Ticket Count -->
+    <!-- For-Review Ticket Count -->
     <div class="col-sm-6 col-md-2">
       <div class="card text-center h-100">
         <div class="card-body d-flex flex-column justify-content-center">
@@ -76,11 +76,12 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
 
   </div>
 
-  <!-- Dashboard organised Ticket Views with links -->
+  <!-- Listed groups of tickets -->
   <!-- To-Do Tickets -->
   <h5>To-Do Tickets ({{ stats.todo_assigned_count }})</h5>
   <ul class="list-group list-group-flush mb-3">
     {% for t in todo_assigned %}
+      <!-- generates the ticket URL using the primary key to auto update if URL patterns change -->
       <a href="{% url 'core:ticket_detail' t.pk %}" 
         class="list-group-item list-group-item-action"
         aria-current="false">
@@ -91,6 +92,7 @@ Shows overall stats as well as lists of tickets assigned to logged in user.
           </div>
           <small class="text-truncate">{{ t.created_at|date:"N j, Y"}}</small>
         </div>
+        <!-- cuts the description to 100 chars and adds ... at the end-->
         <div class="text-truncate">{{ t.description|truncatechars:100 }}</div>
       </a>
     {% empty %}

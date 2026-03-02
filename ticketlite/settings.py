@@ -134,4 +134,5 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-reverse_lazy('core:home') # Redirects the path to my default homepage
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/home/' # Where to go after logging in successfully 
