@@ -19,7 +19,10 @@ All other templates inherit from this to ensure consistent styling
     <!-- Navbar Header for Template Page -->
     <nav class="navbar navbar-light bg-light navbar-expand-lg">
         <div class ="container-fluid">
-            <a class="navbar-brand" href="{% url 'core:home' %}">TicketLite</a>
+            <a class="navbar-brand" href="{% url 'core:landing' %}">TicketLite</a>
+
+            <!-- Hides all the navbar content for the landing page -->
+             {% if request.resolver_match.url_name not in 'landing,login,register' %}
 
             <!-- Left Navbar -->
             <ul class="navbar-nav me-auto nav-tabs">
@@ -58,6 +61,7 @@ All other templates inherit from this to ensure consistent styling
                     <a class="btn btn-outline-primary me-2" href="{% url 'core:login' %}">Login</a>
                     <a class="btn btn-outline-success" href="{% url 'core:register' %}">Register</a>
                 {% endif %}
+            {% endif %}
         </div>
     </nav>
 
