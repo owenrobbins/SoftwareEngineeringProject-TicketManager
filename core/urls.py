@@ -19,6 +19,11 @@ urlpatterns = [
     path('tickets/<int:pk>/', views.ticket_detail, name='ticket_detail'),
     path('tickets/<int:pk>/edit/', views.edit_ticket, name='edit_ticket'),
     path('tickets/<int:pk>/delete/', views.delete_ticket, name='delete_ticket'),
+    path('projects/', views.project_list, name='project_list'),
+    path('projects/create', views.create_project, name='create_project'),
+    path('projects/<int:pk>', views.project_detail, name='project_detail'),
+    path('projects/<int:pk>/edit', views.edit_project, name='edit_project'),
+    path('projects/<int:pk>/delete', views.delete_project, name='delete_project'),
     
     # Django's built in authorisation views rather than writing myself. 
     # Auth documentation: https://docs.djangoproject.com/en/6.0/topics/auth/

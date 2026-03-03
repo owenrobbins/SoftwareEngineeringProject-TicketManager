@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from core.models import Project, Ticket
-from .forms import TicketForm, CommentForm
+from .forms import TicketForm, CommentForm, ProjectForm
 
 def is_admin(user):
     # Helper Function to check if a user is an admin, and return result
@@ -81,12 +81,17 @@ def create_ticket(request):
             ticket = form.save(commit=False) # Waits to commit new ticket so the creator can be done here
             ticket.created_by = request.user
             ticket.save()
+            messages.success(request, "Ticket created successfully. ")
             # Redirects after successful creation of ticket
             return redirect('core:ticket_list')
         else:
             # Form invalid - fall back and try rendering ticket-list with errors to show validation to the user
             tickets = Ticket.objects.all() if request.user.is_authenticated else []
-            return render(request, 'core/ticket_list.html', {'tickets': tickets, 'form': form})
+            return render(request, 'core/ticket_list.html', {
+                'tickets': tickets, 
+                'form': form,
+                'show_modal': True
+            })
 
     # If someone manages to get tickets/create just send back to tickets 
     return redirect('core:ticket_list')
@@ -169,6 +174,74 @@ def delete_ticket(request, pk):
     return render(request, 'core/ticket_confirm_delete.html', {'ticket': ticket})
 
 @login_required
-@user_passes_test(is_admin)
-def delete_project(request, project_id): # Placeholder for deleting entire project, follows similar flow to delete ticket.
-    return
+def project_list(request):
+    # Shows a list of all projects
+    projects = Project.objects.all().order_by('name')
+    return render(request, 'core/project_list.html', {'projects': projects})
+
+@login_required
+def project_detail(request, pk):
+    # Shows a page displaying a single project and all tickets assigned to it
+    # Uses select_related to fetch the data associated with the owner
+    # Queryset Django Documentation: https://docs.djangoproject.com/en/6.0/ref/models/querysets/
+    project = get_object_or_404(Project, pk=pk)
+    tickets = project.tickets.select_related('assigned_to', 'created_by').order_by('-created_at')
+
+    can_edit = request.user.is_staff or request.user == project.owner
+    
+    return render(request, 'core/project_detail.html', {
+        'project': project,
+        'tickets': tickets,
+        'can_edit': can_edit,
+        'form': TicketForm(),
+    })
+
+@login_required
+def create_project(request):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST)
+        projects = Project.objects.all().order_by('name')
+        if form.is_valid():
+            project = form.save(commit=False) # Holds before saving so we can attach the project owner here
+            project.owner = request.user
+            project.save()
+            messages.success(request, "Project created successfully. ")
+            return redirect('core/project_list.html', {
+                'projects':  projects,
+                'form': form,
+                'show_modal': True # Re-opens the modal so that potential errors are visible
+            })
+            
+@login_required
+def edit_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    
+    #Only staff or project owner can edit
+    if not (request.user.is_staff or request.user == project.owner):
+        return HttpResponseForbidden()
+    
+    if request.method == 'PUT':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Project Updated Successfully.")
+            return redirect('core:project_detail', pk=project.pk)
+        
+        else:
+            form = ProjectForm(instance=project)
+            
+        return render(request, 'core/project_edit.html', {'form': form, 'project': project})
+    
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def delete_project(request, pk):
+    # Staff only
+    # Follows same POST confirmation as delete_ticket
+    project = get_object_or_404(Project, pk=pk)
+    
+    if request.method == 'POST':
+        project.delete()
+        messages.success(request, "Project deleted successfully. ")
+        return redirect('core:project_list')
+    
+    return redirect(render, 'core/project_confirm_delete.html', {'project': project})

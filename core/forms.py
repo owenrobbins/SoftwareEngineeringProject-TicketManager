@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ticket, Comment
+from .models import Ticket, Comment, Project
 
 # Model forms can create a form directly from the fields of a model class
 # Can define what fields to include and customise how they appear 
@@ -15,22 +15,24 @@ class TicketForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
+                'placeholder': 'Ticket Name'
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
+                'placeholder': 'What is this ticket about?'
             }),
             'project': forms.Select(attrs={
-                'class': 'form-select',
+                'class': 'form-select'
             }),
             'status': forms.Select(attrs={
-                'class': 'form-select',
+                'class': 'form-select'
             }),
             'priority': forms.Select(attrs={
-                'class': 'form-select',
+                'class': 'form-select'
             }),
             'assigned_to': forms.Select(attrs={
-                'class': 'form-select',
+                'class': 'form-select'
             }),
         }
 
@@ -46,6 +48,23 @@ class CommentForm(forms.ModelForm):
             }),
         }
         labels = {
-            'text': 'Comment',
+            'text': 'Comment'
         }
     
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['name','description']
+        # Owner is set by default in the view, not chosen by the user
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Project Name'
+            }),
+            
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'What is this project about?'
+            })
+        }
