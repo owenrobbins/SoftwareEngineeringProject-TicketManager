@@ -134,7 +134,8 @@ def ticket_detail(request, pk):
         'ticket': ticket,
         'comments': ticket.comments.all(),
         'comment_form': CommentForm(),
-        'can_edit': can_edit        
+        'can_edit': can_edit,    
+        'ticket_form': TicketForm(),   
     })
     
 @login_required
@@ -155,7 +156,11 @@ def edit_ticket(request, pk):
     else:
         form = TicketForm(instance=ticket) # Fetches instance of form and prefills with information
 
-    return render(request, 'core/ticket_edit.html', {'form': form, 'ticket': ticket})
+    return render(request, 'core/ticket_edit.html', {
+        'form': form,
+        'ticket': ticket,
+        'ticket_form': TicketForm(),
+        })
         
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -177,7 +182,11 @@ def delete_ticket(request, pk):
 def project_list(request):
     # Shows a list of all projects
     projects = Project.objects.all().order_by('name')
-    return render(request, 'core/project_list.html', {'projects': projects})
+    return render(request, 'core/project_list.html', {
+        'projects': projects,
+        'project_form': ProjectForm(),
+        'ticket_form': TicketForm(), 
+        })
 
 @login_required
 def project_detail(request, pk):
@@ -230,7 +239,11 @@ def edit_project(request, pk):
     else:
         form = ProjectForm(instance=project)
             
-    return render(request, 'core/project_edit.html', {'form': form, 'project': project})
+    return render(request, 'core/project_edit.html', {
+        'form': form, 
+        'project': project,
+        'ticket_form': TicketForm(),
+        })
     
 @login_required
 @user_passes_test(lambda u: u.is_staff)
