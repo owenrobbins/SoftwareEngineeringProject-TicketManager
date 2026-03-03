@@ -27,8 +27,25 @@
                     </td>
                     <td>{{ ticket.project }}</td>
                     <td>{{ ticket.description|truncatechars:50 }}</td> <!-- Limits the view to 50 chars and adds ... to the end -->
-                    <td>{{ ticket.get_status_display }}</td>
-                    <td>{{ ticket.get_priority_display }}</td>
+                    <td>
+                        <span class="badge
+                            {% if ticket.status == 'TO-DO' %}badge-todo
+                            {% elif ticket.status == 'IN_PROGRESS' %}badge-progress
+                            {% elif ticket.status == 'FOR_REVIEW' %}badge-review
+                            {% elif ticket.status == 'DONE' %}badge-done
+                            {% endif %}">
+                            {{ ticket.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge
+                            {% if ticket.priority == 'LOW' %}badge-low
+                            {% elif ticket.priority == 'MEDIUM' %}badge-medium
+                            {% elif ticket.priority == 'HIGH' %}badge-high
+                            {% endif %}">
+                            {{ ticket.get_priority_display }}
+                        </span>                        
+                    </td>
                     <td>{{ ticket.created_by }}</td>
                     <td>{{ ticket.created_at}}</td>
                 </tr>

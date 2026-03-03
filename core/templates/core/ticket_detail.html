@@ -26,11 +26,24 @@
                       <div class="row">
                         <div class="col-md-2">
                             <p class="mb-1"><strong>Status</strong></p>
-                            <p class="badge bg-info text-dark">{{ ticket.get_status_display }}</p>
+                            <p class="badge
+                                {% if ticket.status == 'TO-DO' %}badge-todo
+                                {% elif ticket.status == 'IN_PROGRESS' %}badge-progress
+                                {% elif ticket.status == 'FOR_REVIEW' %}badge-review
+                                {% elif ticket.status == 'DONE' %}badge-done
+                                {% endif %}">
+                                {{ ticket.get_status_display }}
+                            </p>
                         </div>
                         <div class="col-md-4">
                             <p class="mb-1"><strong>Priority</strong></p>
-                            <p class="badge bg-warning text-dark">{{ ticket.get_priority_display }}</p>
+                            <p class="badge
+                                {% if ticket.priority == 'LOW' %}badge-low
+                                {% elif ticket.priority == 'MEDIUM' %}badge-medium
+                                {% elif ticket.priority == 'HIGH' %}badge-high
+                                {% endif %}">
+                                {{ticket.get_priority_display}}
+                            </p>
                         </div>
                         <div class="col-md-6 text-md-end">
                             {% if user.is_staff %} <!-- Checks if the user is an admin -->

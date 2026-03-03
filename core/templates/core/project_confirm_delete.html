@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<!-- Fallback delete confirmation page if someone hits the delete URL directly via GET.
+     Under normal use the delete is handled through the modal on project_detail. -->
+
+<div class="container mt-4" style="max-width: 500px;">
+    <h3>Delete Project</h3>
+    <p>Are you sure you want to delete <strong>{{ project.name }}</strong>?</p>
+    <p class="text-danger small">This will delete all tickets in the project and cannot be undone.</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Confirm Delete</button>
+        <a href="{% url 'core:project_detail' project.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+{% endblock %}

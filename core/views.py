@@ -220,17 +220,17 @@ def edit_project(request, pk):
     if not (request.user.is_staff or request.user == project.owner):
         return HttpResponseForbidden()
     
-    if request.method == 'PUT':
+    if request.method == 'POST':
         form = ProjectForm(request.POST, instance=project)
         if form.is_valid():
             form.save()
             messages.success(request, "Project Updated Successfully.")
             return redirect('core:project_detail', pk=project.pk)
         
-        else:
-            form = ProjectForm(instance=project)
+    else:
+        form = ProjectForm(instance=project)
             
-        return render(request, 'core/project_edit.html', {'form': form, 'project': project})
+    return render(request, 'core/project_edit.html', {'form': form, 'project': project})
     
 @login_required
 @user_passes_test(lambda u: u.is_staff)
