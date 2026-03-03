@@ -56,7 +56,7 @@ def home(request):
         'in_progress_assigned': in_progress_assigned,
         'for_review_assigned': for_review_assigned,
         'done_assigned': done_assigned,
-        'form': TicketForm(),   # For create modal form
+        'ticket_form': TicketForm(),   # For create modal form
     }
     return render(request, 'core/home.html', context)
 
@@ -89,7 +89,7 @@ def create_ticket(request):
             tickets = Ticket.objects.all() if request.user.is_authenticated else []
             return render(request, 'core/ticket_list.html', {
                 'tickets': tickets, 
-                'form': form,
+                'ticket_form': form,
                 'show_modal': True
             })
 
@@ -105,7 +105,7 @@ def ticket_list(request):
     else:
         tickets = []
         
-    return render(request, 'core/ticket_list.html', {'form': form, 'tickets': tickets})
+    return render(request, 'core/ticket_list.html', {'ticket_form': TicketForm(), 'tickets': tickets})
 
 @login_required
 def ticket_detail(request, pk):
@@ -176,7 +176,10 @@ def delete_ticket(request, pk):
         return redirect('core:ticket_list')
 
     # If someone GETs the URL (shouldn't happen for modal flow), render a simple confirm page
-    return render(request, 'core/ticket_confirm_delete.html', {'ticket': ticket})
+    return render(request, 'core/ticket_confirm_delete.html', {
+        'ticket': ticket,
+        'ticket_form': TicketForm()        
+    })
 
 @login_required
 def project_list(request):
@@ -202,7 +205,7 @@ def project_detail(request, pk):
         'project': project,
         'tickets': tickets,
         'can_edit': can_edit,
-        'form': TicketForm(),
+        'ticket_form': TicketForm(),
     })
 
 @login_required
@@ -215,11 +218,15 @@ def create_project(request):
             project.owner = request.user
             project.save()
             messages.success(request, "Project created successfully. ")
-            return redirect('core/project_list.html', {
-                'projects':  projects,
-                'form': form,
-                'show_modal': True # Re-opens the modal so that potential errors are visible
-            })
+            return redirect('core:project_list.html', pk=project.pk)
+            
+        return render(request, 'core/project_list.html', {
+            'projects':  projects,
+            'project_form': form,
+            'ticket_form': TicketForm(),
+            'show_modal': True # Re-opens the modal so that potential errors are visible
+        })
+    return redirect('core:project_list')
             
 @login_required
 def edit_project(request, pk):
@@ -257,4 +264,7 @@ def delete_project(request, pk):
         messages.success(request, "Project deleted successfully. ")
         return redirect('core:project_list')
     
-    return redirect(render, 'core/project_confirm_delete.html', {'project': project})
+    return redirect(render, 'core/project_confirm_delete.html', 
+        {'project': project,
+         'ticket_form': TicketForm()
+    })
