@@ -150,7 +150,7 @@ def edit_comment(request, pk):
     
     if request.method == 'POST':
         form = CommentForm(request.POST, instance=comment)
-        if form.is_valid:
+        if form.is_valid():
             form.save()
             messages.success(request, "comment successfully updated ")
             return redirect('core:ticket_detail', pk=comment.ticket.pk)
