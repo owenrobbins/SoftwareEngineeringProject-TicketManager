@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from core.models import Project, Ticket, UserProfile
+from core.models import Project, Ticket, UserProfile, Comment
 from .forms import TicketForm, CommentForm, ProjectForm, UserProfileForm
 
 def is_admin(user):
@@ -141,6 +141,45 @@ def ticket_detail(request, pk):
     })
     
 @login_required
+def edit_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    
+    # Only an admin or author of the comment can edit
+    if not (request.user.is_staff or request.user.is_superuser or request.user == comment.author):
+        return HttpResponseForbidden()
+    
+    if request.method == 'POST':
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid:
+            form.save()
+            messages.success(request, "comment successfully updated ")
+            return redirect('core:ticket_detail', pk=comment.ticket.pk)
+    
+    else: 
+        form = CommentForm(instance=comment)
+        
+    return render(request, 'core/comment_edit.html', {
+        'form': form,
+        'comment': comment,
+        'ticket_form': TicketForm(),
+    })
+    
+@login_required
+@user_passes_test(lambda u: u.is_staff or u.is_superuser)
+def delete_comment(request, pk):
+    from .models import Comment
+    comment = get_object_or_404(Comment, pk=pk)
+    ticket_pk = comment.ticket.pk 
+    
+    if request.method == 'POST':
+        comment.delete()
+        messages.success(request, "Comment Succesfully Deleted")
+        return redirect('core:ticket_detail', pk=ticket_pk)
+    
+    # Fallback if someone goes to the URL directly 
+    return redirect('core:ticket_detail', pk=ticket_pk)
+    
+@login_required
 def edit_ticket(request, pk):
     # View for editing ticket details, only accessible if logged in
     ticket = get_object_or_404(Ticket, pk=pk)
@@ -220,7 +259,7 @@ def create_project(request):
             project.owner = request.user
             project.save()
             messages.success(request, "Project created successfully. ")
-            return redirect('core:project_list.html')
+            return redirect('core:project_list')
             
         return render(request, 'core/project_list.html', {
             'projects':  projects,
@@ -277,7 +316,7 @@ def profile_view(request, pk):
     
     profile_user = get_object_or_404(User, pk=pk)
     profile, _ = UserProfile.objects.get_or_create(user=profile_user) # uses 'or create' to handle any users created within admin tab
-    can_edit = request.user.is_staff or request.user == profile
+    can_edit = (request.user.is_staff or request.user.is_superuser) or request.user == profile_user
     
     return render(request, 'core/profile.html', {
         'profile_user': profile_user,
@@ -329,9 +368,9 @@ def delete_user(request, pk):
     
 @login_required
 def user_list(request):
-    users = User.objects.select_related('user_profile').order_by('username')
+    users = User.objects.select_related('userprofile').order_by('username')
     return render(request, 'core/user_list.html', {
         'users': users,
-        'is_priveleged': request.user.is_staff or request.user.is_superuser,
+        'is_privileged': request.user.is_staff or request.user.is_superuser,
         'ticket_form': TicketForm(), 
     })
