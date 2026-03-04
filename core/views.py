@@ -218,7 +218,7 @@ def create_project(request):
             project.owner = request.user
             project.save()
             messages.success(request, "Project created successfully. ")
-            return redirect('core:project_list.html', pk=project.pk)
+            return redirect('core:project_list.html')
             
         return render(request, 'core/project_list.html', {
             'projects':  projects,
