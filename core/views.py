@@ -1,11 +1,12 @@
 # core/views.py
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from core.models import Project, Ticket
-from .forms import TicketForm, CommentForm, ProjectForm
+from core.models import Project, Ticket, UserProfile
+from .forms import TicketForm, CommentForm, ProjectForm, UserProfileForm
 
 def is_admin(user):
     # Helper Function to check if a user is an admin, and return result
@@ -66,7 +67,8 @@ def register(request):
     if request.method == 'POST': # If the user is submitting the form
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            UserProfile.objects.create(user=user)
             return redirect('core:login')
     
     else: # If the user is just opening the Registration Form
@@ -267,4 +269,69 @@ def delete_project(request, pk):
     return redirect(render, 'core/project_confirm_delete.html', 
         {'project': project,
          'ticket_form': TicketForm()
+    })
+    
+@login_required
+def profile_view(request, pk):
+    #Shows the user their profile page, of whoever is logged in
+    
+    profile_user = get_object_or_404(User, pk=pk)
+    profile, _ = UserProfile.objects.get_or_create(user=profile_user) # uses 'or create' to handle any users created within admin tab
+    can_edit = request.user.is_staff or request.user == profile
+    
+    return render(request, 'core/profile.html', {
+        'profile_user': profile_user,
+        'profile': profile,
+        'can_edit': can_edit,
+        'ticket_form': TicketForm()
+    })
+    
+@login_required
+def edit_profile(request, pk):
+    profile_user = get_object_or_404(User, pk=pk)
+    profile, _ = UserProfile.objects.get_or_create(user=profile_user)
+    
+    # Only the user themselves or an admin can edit
+    if not (request.user.is_staff or request.user == profile_user):
+        return HttpResponseForbidden
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully updated Profile. ")
+            return redirect('core:profile_view', pk=profile_user.pk)
+    
+    else:
+        form = UserProfileForm(instance=profile)
+        
+    return render(request, 'core/profile_edit.html', {
+        'form': form,
+        'profile_user': profile_user,
+        'ticket_form': TicketForm()
+    })
+    
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def delete_user(request, pk):
+    # Admin only, deletes the user account permanently 
+    profile_user = get_object_or_404(User, pk=pk)
+    
+    if request.method == 'POST':
+        profile_user.delete()
+        messages.success(request, f"User {profile_user.username} deleted. ")
+        return redirect('core:home')
+    
+    return render(request, 'core/profile_confirm_delete.html', {
+        'profile_user': profile_user,
+        'ticket_form': TicketForm()
+    })
+    
+@login_required
+def user_list(request):
+    users = User.objects.select_related('user_profile').order_by('username')
+    return render(request, 'core/user_list.html', {
+        'users': users,
+        'is_priveleged': request.user.is_staff or request.user.is_superuser,
+        'ticket_form': TicketForm(), 
     })

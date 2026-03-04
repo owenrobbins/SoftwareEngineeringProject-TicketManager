@@ -20,10 +20,14 @@ urlpatterns = [
     path('tickets/<int:pk>/edit/', views.edit_ticket, name='edit_ticket'),
     path('tickets/<int:pk>/delete/', views.delete_ticket, name='delete_ticket'),
     path('projects/', views.project_list, name='project_list'),
-    path('projects/create', views.create_project, name='create_project'),
-    path('projects/<int:pk>', views.project_detail, name='project_detail'),
-    path('projects/<int:pk>/edit', views.edit_project, name='edit_project'),
-    path('projects/<int:pk>/delete', views.delete_project, name='delete_project'),
+    path('projects/create/', views.create_project, name='create_project'),
+    path('projects/<int:pk>/', views.project_detail, name='project_detail'),
+    path('projects/<int:pk>/edit/', views.edit_project, name='edit_project'),
+    path('projects/<int:pk>/delete/', views.delete_project, name='delete_project'),
+    path('profile/<int:pk>/', views.profile_view, name='profile_view'),
+    path('profile/<int:pk>/edit/', views.edit_profile, name='edit_profile'),
+    path('profile/<int:pk>/delete/', views.delete_user, name='delete_user'),
+    path('users/', views.user_list, name='user_list'), 
     
     # Django's built in authorisation views rather than writing myself. 
     # Auth documentation: https://docs.djangoproject.com/en/6.0/topics/auth/

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Ticket, Comment, Project
+from .models import Ticket, Comment, Project, UserProfile
 
 # Model forms can create a form directly from the fields of a model class
 # Can define what fields to include and customise how they appear 
@@ -66,5 +66,24 @@ class ProjectForm(forms.ModelForm):
                 'class': 'form-control',
                 'rows': 3,
                 'placeholder': 'What is this project about?'
+            })
+        }
+        
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['department', 'job_title', 'location']
+        widgets = {
+            'department': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. Engineering'
+            }),
+            'job_title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. Software Developer'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g. London, UK'
             })
         }
