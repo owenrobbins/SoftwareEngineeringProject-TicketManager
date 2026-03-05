@@ -244,7 +244,7 @@ All other templates inherit from this to ensure consistent styling
             <div class="d-flex mx-auto align-items-center gap-2" style="width: 380px;">
                 <form class="d-flex flex-grow-1" role="search" action="{% url 'core:search' %}" method="GET">
                     <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search"
-                        value="{% if_request.resolver_match.url_name == 'search' %}{{ request.GET.q }}{% endif %}">
+                        value="{{ request.GET.q }}">
                 </form>
                 <button type="button" class="btn-create"
                     data-bs-toggle="modal" data-bs-target="#createTicketModal">
@@ -258,7 +258,7 @@ All other templates inherit from this to ensure consistent styling
                     <a class="navbar-text text-decoration-none" href="{% url 'core:profile_view' user.pk %}">
                         {{ user.username }}
                     </a>
-                    <a class="btn btn-outline-danger me-2" href={% url 'core:logout' %}>Logout</a>
+                    <a class="btn btn-outline-danger me-2" href="{% url 'core:logout' %}">Logout</a>
                 {% endif %}
             </div>
             {% endif %}

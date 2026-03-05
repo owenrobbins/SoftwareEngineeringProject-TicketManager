@@ -26,9 +26,9 @@
                     <td>
                         <span class="badge
                             {% if ticket.status == 'TO-DO' %}badge-todo
-                            {% if ticket.status == 'IN_PROGRESS' %}badge-progress
-                            {% if ticket.status == 'FOR_REVIEW' %}badge-review
-                            {% if ticket.status == 'DONE' %}badge-done
+                            {% elif ticket.status == 'IN_PROGRESS' %}badge-progress
+                            {% elif ticket.status == 'FOR_REVIEW' %}badge-review
+                            {% elif ticket.status == 'DONE' %}badge-done
                             {% endif %}">
                             {{ ticket.get_status_display }}
                         </span>
@@ -36,10 +36,10 @@
                     <td>
                         <span class="badge
                             {% if ticket.priority == 'LOW' %}badge-low
-                            {% if ticket.priority == 'MEDIUM' %}badge-medium
-                            {% if ticket.priority == 'HIGH' %}badge-high
+                            {% elif ticket.priority == 'MEDIUM' %}badge-medium
+                            {% elif ticket.priority == 'HIGH' %}badge-high
                             {% endif %}">
-                            {{ ticket.get_status_display }}
+                            {{ ticket.get_priority_display }}
                         </span>
                     </td>
                     <td>{{ ticket.assigned_to|default:"Unassigned" }}</td>
@@ -69,6 +69,7 @@
                     <td>{{ project.description|truncatechars:80 }}</td>
                     <td>{{ project.owner }}</td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     {% else %}
