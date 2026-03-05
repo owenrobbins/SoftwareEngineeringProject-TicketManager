@@ -242,8 +242,9 @@ All other templates inherit from this to ensure consistent styling
 
             <!-- Center Search bar and Create Ticket Button -->
             <div class="d-flex mx-auto align-items-center gap-2" style="width: 380px;">
-                <form class="d-flex flex-grow-1" role="search">
-                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex flex-grow-1" role="search" action="{% url 'core:search' %}" method="GET">
+                    <input class="form-control" type="search" name="q" placeholder="Search" aria-label="Search"
+                        value="{% if_request.resolver_match.url_name == 'search' %}{{ request.GET.q }}{% endif %}">
                 </form>
                 <button type="button" class="btn-create"
                     data-bs-toggle="modal" data-bs-target="#createTicketModal">

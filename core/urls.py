@@ -30,6 +30,7 @@ urlpatterns = [
     path('profile/<int:pk>/edit/', views.edit_profile, name='edit_profile'),
     path('profile/<int:pk>/delete/', views.delete_user, name='delete_user'),
     path('users/', views.user_list, name='user_list'), 
+    path('search/', views.search, name='search'),
     
     # Django's built in authorisation views rather than writing myself. 
     # Auth documentation: https://docs.djangoproject.com/en/6.0/topics/auth/

@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
+from django.db.models import Q
 from core.models import Project, Ticket, UserProfile, Comment
 from .forms import TicketForm, CommentForm, ProjectForm, UserProfileForm
 
@@ -373,4 +374,26 @@ def user_list(request):
         'users': users,
         'is_privileged': request.user.is_staff or request.user.is_superuser,
         'ticket_form': TicketForm(), 
+    })
+    
+@login_required
+def search(request):
+    query = request.GET.get('q', '').strip()
+    ticket_results=[]
+    project_results = []
+    
+    if query:
+        ticket_results = Ticket.objects.filter(
+            Q(title__icontains=query) | Q(description__icontains=query)
+        ).select_related('project', 'assigned_to')
+        
+        project_results = Project.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query)
+        )
+    
+    return render(request, 'core/search_results.html', {
+        'query': query,
+        'ticket_results': ticket_results,
+        'project_results': project_results,
+        'ticket_form': TicketForm()
     })
