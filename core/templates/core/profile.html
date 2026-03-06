@@ -37,7 +37,7 @@
 
 <!-- Delete User Modal -->
  <div class="modal fade" id="confirmDeleteUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialogue modal-dialogue-centered">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form method="post" action="{% url 'core:delete_user' profile_user.pk %}">
                 {% csrf_token %}

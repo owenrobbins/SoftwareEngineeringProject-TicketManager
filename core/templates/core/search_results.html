@@ -22,7 +22,7 @@
                 {% for ticket in ticket_results %}
                 <tr>
                     <td><a href="{% url 'core:ticket_detail' ticket.pk %}">{{ ticket.title }}</a></td>
-                    <td>{{ ticket.project_name }}</td>
+                    <td>{{ ticket.project.name }}</td>
                     <td>
                         <span class="badge
                             {% if ticket.status == 'TO-DO' %}badge-todo

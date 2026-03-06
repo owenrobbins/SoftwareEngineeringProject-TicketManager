@@ -306,7 +306,7 @@ def delete_project(request, pk):
         messages.success(request, "Project deleted successfully. ")
         return redirect('core:project_list')
     
-    return redirect(render, 'core/project_confirm_delete.html', 
+    return render(render, 'core/project_confirm_delete.html', 
         {'project': project,
          'ticket_form': TicketForm()
     })
@@ -333,7 +333,7 @@ def edit_profile(request, pk):
     
     # Only the user themselves or an admin can edit
     if not (request.user.is_staff or request.user == profile_user):
-        return HttpResponseForbidden
+        return HttpResponseForbidden()
     
     if request.method == 'POST':
         form = UserProfileForm(request.POST, instance=profile)
