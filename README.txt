@@ -29,15 +29,15 @@
 
 ## Test User Accounts
 
-Username: owen.robbins   Password: Password123
-Username: bob      Passwrod: Password123!
+Username: owen.robbins   Password: Password123   (SuperUser)
+Username: bob      Passwrod: Password123!        (Staff)
 Username: carol     Password: Password123!
 username: dave     Password: Password123!
 username: eve     Password: Password123!
 username: frank     Password: Password123!
-username: grace     Password: Password123!
+username: grace     Password: Password123!       (Staff)
 username: harry     Password: Password123!
-username: henry     Password: Password123!
+username: henry     Password: Password123!       (Staff)
 username: susan     Password: Password123!
 
 
